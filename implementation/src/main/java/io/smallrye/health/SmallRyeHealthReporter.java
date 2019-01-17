@@ -133,7 +133,7 @@ public class SmallRyeHealthReporter {
 
         JsonArray checkResults = results.build();
 
-        builder.add("outcome", checkResults.isEmpty() ? emptyChecksOutcome.toString() : outcome.toString());
+        builder.add("status", checkResults.isEmpty() ? emptyChecksOutcome.toString() : outcome.toString());
         builder.add("checks", checkResults);
 
         return new SmallRyeHealth(builder.build());
@@ -146,8 +146,8 @@ public class SmallRyeHealthReporter {
         JsonObject each = jsonObject(check);
         results.add(each);
         if (globalOutcome == HealthCheckResponse.State.UP) {
-            String state = each.getString("state");
-            if (state.equals("DOWN")) {
+            String status = each.getString("status");
+            if (status.equals("DOWN")) {
                 return HealthCheckResponse.State.DOWN;
             }
         }
@@ -178,7 +178,7 @@ public class SmallRyeHealthReporter {
     private JsonObject jsonObject(HealthCheckResponse response) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         builder.add("name", response.getName());
-        builder.add("state", response.getState().toString());
+        builder.add("status", response.getState().toString());
         response.getData().ifPresent(d -> {
             JsonObjectBuilder data = Json.createObjectBuilder();
             for (Map.Entry<String, Object> entry : d.entrySet()) {

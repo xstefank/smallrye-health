@@ -32,6 +32,9 @@ import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
 import org.eclipse.microprofile.health.Liveness;
 import org.eclipse.microprofile.health.Readiness;
 
+import io.smallrye.health.registry.LivenessHealthRegistry;
+import io.smallrye.health.registry.ReadinessHealthRegistry;
+
 @ApplicationScoped
 public class SmallRyeHealthReporter {
     private static final String ROOT_CAUSE = "rootCause";
@@ -67,7 +70,13 @@ public class SmallRyeHealthReporter {
     @ConfigProperty(name = "io.smallrye.health.emptyChecksOutcome", defaultValue = "UP")
     String emptyChecksOutcome;
 
-    private List<HealthCheck> additionalChecks = new ArrayList<>();
+    @Inject
+    @Liveness
+    LivenessHealthRegistry livenessHealthRegistry;
+
+    @Inject
+    @Readiness
+    ReadinessHealthRegistry readinessHealthRegistry;
 
     private JsonProvider jsonProvider = JsonProvider.provider();
 
@@ -97,15 +106,16 @@ public class SmallRyeHealthReporter {
     }
 
     public SmallRyeHealth getHealth() {
-        return getHealth(healthChecks, livenessChecks, readinessChecks);
+        return getHealth(healthChecks, livenessChecks, readinessChecks,
+                livenessHealthRegistry.getChecks(), readinessHealthRegistry.getChecks());
     }
 
     public SmallRyeHealth getLiveness() {
-        return getHealth(livenessChecks);
+        return getHealth(livenessChecks, livenessHealthRegistry.getChecks());
     }
 
     public SmallRyeHealth getReadiness() {
-        return getHealth(readinessChecks);
+        return getHealth(readinessChecks, readinessHealthRegistry.getChecks());
     }
 
     public SmallRyeHealth getHealthGroup(String groupName) {
@@ -140,10 +150,6 @@ public class SmallRyeHealthReporter {
             for (Iterable<HealthCheck> instance : checks) {
                 status = processChecks(instance, results, status);
             }
-        }
-
-        if (!additionalChecks.isEmpty()) {
-            status = processChecks(additionalChecks, results, status);
         }
 
         JsonObjectBuilder builder = jsonProvider.createObjectBuilder();
@@ -229,16 +235,6 @@ public class SmallRyeHealthReporter {
         });
 
         return builder.build();
-    }
-
-    public void addHealthCheck(HealthCheck check) {
-        if (check != null) {
-            additionalChecks.add(check);
-        }
-    }
-
-    public void removeHealthCheck(HealthCheck check) {
-        additionalChecks.remove(check);
     }
 
     private static String getStackTrace(Throwable t) {

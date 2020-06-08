@@ -16,9 +16,13 @@ import org.eclipse.microprofile.health.HealthCheckResponse.State;
 import org.junit.Before;
 import org.junit.Test;
 
+import io.smallrye.health.registry.LivenessHealthRegistry;
+import io.smallrye.health.registry.ReadinessHealthRegistry;
+
 public class SmallRyeHealthReporterTest {
 
     private SmallRyeHealthReporter reporter;
+    private LivenessHealthRegistry healthRegistry;
 
     public static class FailingHealthCheck implements HealthCheck {
         @Override
@@ -44,6 +48,9 @@ public class SmallRyeHealthReporterTest {
     @Before
     public void createReporter() {
         reporter = new SmallRyeHealthReporter();
+        healthRegistry = new LivenessHealthRegistry();
+        reporter.livenessHealthRegistry = healthRegistry;
+        reporter.readinessHealthRegistry = new ReadinessHealthRegistry();
         reporter.emptyChecksOutcome = "UP";
         reporter.uncheckedExceptionDataStyle = "rootCause";
     }
@@ -70,7 +77,7 @@ public class SmallRyeHealthReporterTest {
 
     @Test
     public void testGetHealthWithFailingCheckAndStyleDefault() {
-        reporter.addHealthCheck(new FailingHealthCheck());
+        healthRegistry.register(new FailingHealthCheck());
 
         SmallRyeHealth health = reporter.getHealth();
 
@@ -85,7 +92,7 @@ public class SmallRyeHealthReporterTest {
 
     @Test
     public void testGetHealthWithFailingCheckAndStyleNone() {
-        reporter.addHealthCheck(new FailingHealthCheck());
+        healthRegistry.register(new FailingHealthCheck());
         reporter.setUncheckedExceptionDataStyle("NONE");
 
         SmallRyeHealth health = reporter.getHealth();
@@ -100,7 +107,7 @@ public class SmallRyeHealthReporterTest {
 
     @Test
     public void testGetHealthWithFailingCheckAndStyleStackTrace() {
-        reporter.addHealthCheck(new FailingHealthCheck());
+        healthRegistry.register(new FailingHealthCheck());
         reporter.setUncheckedExceptionDataStyle("stackTrace");
 
         SmallRyeHealth health = reporter.getHealth();
@@ -116,66 +123,66 @@ public class SmallRyeHealthReporterTest {
 
     @Test
     public void testGetHealthWithMixedChecksAndStyleDefault() {
-        reporter.addHealthCheck(new UpHealthCheck());
-        reporter.addHealthCheck(new FailingHealthCheck());
-        reporter.addHealthCheck(new DownHealthCheck());
+        healthRegistry.register(new UpHealthCheck());
+        healthRegistry.register(new FailingHealthCheck());
+        healthRegistry.register(new DownHealthCheck());
 
         SmallRyeHealth health = reporter.getHealth();
 
         assertThat(health.isDown(), is(true));
         assertThat(health.getPayload().getString("status"), is("DOWN"));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("name"), is("up"));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("status"), is("UP"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("name"), is("down"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("status"), is("DOWN"));
         assertThat(health.getPayload().getJsonArray("checks").getJsonObject(1).getString("name"),
                 is(FailingHealthCheck.class.getName()));
         assertThat(health.getPayload().getJsonArray("checks").getJsonObject(1).getString("status"), is("DOWN"));
         assertThat(health.getPayload().getJsonArray("checks").getJsonObject(1).getJsonObject("data").getString("rootCause"),
                 is("this health check has failed"));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("name"), is("down"));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("status"), is("DOWN"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("name"), is("up"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("status"), is("UP"));
     }
 
     @Test
     public void testGetHealthWithMixedChecksAndStyleNone() {
-        reporter.addHealthCheck(new UpHealthCheck());
-        reporter.addHealthCheck(new FailingHealthCheck());
-        reporter.addHealthCheck(new DownHealthCheck());
+        healthRegistry.register(new UpHealthCheck());
+        healthRegistry.register(new FailingHealthCheck());
+        healthRegistry.register(new DownHealthCheck());
         reporter.setUncheckedExceptionDataStyle("NONE");
 
         SmallRyeHealth health = reporter.getHealth();
 
         assertThat(health.isDown(), is(true));
         assertThat(health.getPayload().getString("status"), is("DOWN"));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("name"), is("up"));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("status"), is("UP"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("name"), is("down"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("status"), is("DOWN"));
         assertThat(health.getPayload().getJsonArray("checks").getJsonObject(1).getString("name"),
                 is(FailingHealthCheck.class.getName()));
         assertThat(health.getPayload().getJsonArray("checks").getJsonObject(1).getString("status"), is("DOWN"));
         assertThat(health.getPayload().getJsonArray("checks").getJsonObject(1).getJsonObject("data"), is(nullValue()));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("name"), is("down"));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("status"), is("DOWN"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("name"), is("up"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("status"), is("UP"));
     }
 
     @Test
     public void testGetHealthWithMixedChecksAndStyleStackTrace() {
-        reporter.addHealthCheck(new UpHealthCheck());
-        reporter.addHealthCheck(new FailingHealthCheck());
-        reporter.addHealthCheck(new DownHealthCheck());
+        healthRegistry.register(new UpHealthCheck());
+        healthRegistry.register(new FailingHealthCheck());
+        healthRegistry.register(new DownHealthCheck());
         reporter.setUncheckedExceptionDataStyle("stackTrace");
 
         SmallRyeHealth health = reporter.getHealth();
 
         assertThat(health.isDown(), is(true));
         assertThat(health.getPayload().getString("status"), is("DOWN"));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("name"), is("up"));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("status"), is("UP"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("name"), is("down"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(0).getString("status"), is("DOWN"));
         assertThat(health.getPayload().getJsonArray("checks").getJsonObject(1).getString("name"),
                 is(FailingHealthCheck.class.getName()));
         assertThat(health.getPayload().getJsonArray("checks").getJsonObject(1).getString("status"), is("DOWN"));
         assertThat(health.getPayload().getJsonArray("checks").getJsonObject(1).getJsonObject("data").getString("stackTrace"),
                 is(notNullValue()));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("name"), is("down"));
-        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("status"), is("DOWN"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("name"), is("up"));
+        assertThat(health.getPayload().getJsonArray("checks").getJsonObject(2).getString("status"), is("UP"));
     }
 
     @Test
@@ -188,7 +195,7 @@ public class SmallRyeHealthReporterTest {
         logger.setLevel(Level.ALL);
         logger.setUseParentHandlers(false);
 
-        reporter.addHealthCheck(new DownHealthCheck());
+        healthRegistry.register(new DownHealthCheck());
         reporter.reportHealth(new ByteArrayOutputStream(), reporter.getHealth());
 
         handler.flush();

@@ -23,13 +23,12 @@ package io.smallrye.health.deployment;
 
 import java.time.Duration;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.health.HealthCheckResponse;
 
 import io.smallrye.health.api.AsyncHealthCheck;
 import io.smallrye.health.api.Wellness;
 import io.smallrye.mutiny.Uni;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @Wellness
 @ApplicationScoped

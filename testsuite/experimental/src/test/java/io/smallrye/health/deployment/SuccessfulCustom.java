@@ -21,12 +21,11 @@
  */
 package io.smallrye.health.deployment;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 
 import io.smallrye.health.api.HealthGroup;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @HealthGroup("group1")
 @HealthGroup("group2")

@@ -21,11 +21,11 @@ import java.net.URL;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.annotation.Priority;
-
 import org.jboss.weld.environment.deployment.discovery.BeanArchiveBuilder;
 import org.jboss.weld.environment.deployment.discovery.BeanArchiveHandler;
 import org.jboss.weld.environment.util.Files;
+
+import jakarta.annotation.Priority;
 
 /**
  * Special handler for WildFly VFS urls.

@@ -24,10 +24,6 @@ package io.smallrye.health.test;
 
 import java.time.Duration;
 
-import javax.inject.Inject;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.testng.Assert;
@@ -38,6 +34,9 @@ import io.smallrye.health.deployment.SuccessLiveness;
 import io.smallrye.health.deployment.SuccessLivenessAsync;
 import io.smallrye.health.deployment.SuccessReadiness;
 import io.smallrye.health.deployment.SuccessReadinessAsync;
+import jakarta.inject.Inject;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 
 public class AsyncSyncHealthTest extends TCKBase {
 

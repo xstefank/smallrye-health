@@ -3,9 +3,6 @@ package io.smallrye.health;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
@@ -13,6 +10,8 @@ import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
 
 import io.smallrye.health.api.AsyncHealthCheck;
 import io.smallrye.mutiny.Uni;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class AsyncHealthCheckFactory {

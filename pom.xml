@@ -21,21 +21,21 @@
 
   <parent>
     <groupId>io.smallrye</groupId>
-    <artifactId>smallrye-parent</artifactId>
-    <version>29</version>
+    <artifactId>smallrye-parent-jakarta</artifactId>
+    <version>30-SNAPSHOT</version>
   </parent>
 
   <artifactId>smallrye-health-parent</artifactId>
-  <version>3.2.0-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <name>SmallRye Health: Parent</name>
   <url>http://smallrye.io</url>
 
   <properties>
-    <version.eclipse.microprofile.config>2.0</version.eclipse.microprofile.config>
-    <version.eclipse.microprofile.health>3.1</version.eclipse.microprofile.health>
-    <version.jakarta.servlet>4.0.4</version.jakarta.servlet>
+    <version.eclipse.microprofile.config>3.0-RC1</version.eclipse.microprofile.config>
+    <version.eclipse.microprofile.health>4.0-SNAPSHOT</version.eclipse.microprofile.health>
+    <version.jakarta.servlet>5.0.0</version.jakarta.servlet>
     <version.smallrye-config>2.4.2</version.smallrye-config>
     <version.smallrye-common>1.6.0</version.smallrye-common>
 
@@ -91,7 +91,7 @@
             <artifactId>org.osgi.annotation.versioning</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>javax.enterprise</groupId>
+            <groupId>jakarta.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
           </exclusion>
         </exclusions>
@@ -102,19 +102,19 @@
         <version>${version.eclipse.microprofile.health}</version>
         <exclusions>
           <exclusion>
-            <groupId> javax.enterprise</groupId>
+            <groupId>jakarta.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
+            <groupId>jakrta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>javax.json</groupId>
-            <artifactId>javax.json-api</artifactId>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>javax.mail</groupId>
+            <groupId>jakarta.mail</groupId>
             <artifactId>mailapi</artifactId>
           </exclusion>
         </exclusions>
@@ -139,7 +139,7 @@
         <scope>test</scope>
         <exclusions>
           <exclusion>
-            <groupId>javax.enterprise</groupId>
+            <groupId>jakarta.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
           </exclusion>
         </exclusions>

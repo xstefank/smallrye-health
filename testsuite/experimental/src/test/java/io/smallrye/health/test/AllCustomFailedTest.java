@@ -22,17 +22,20 @@
 
 package io.smallrye.health.test;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
+import java.io.File;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import io.smallrye.health.deployment.FailedCustom;
 import io.smallrye.health.deployment.SuccessfulCustom;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 
 /**
  * @author Prashanth Gunapalasingam
@@ -41,8 +44,13 @@ public class AllCustomFailedTest extends TCKBase {
 
     @Deployment
     public static Archive getDeployment() {
-        return DeploymentUtils.createWarFileWithClasses(AllCustomFailedTest.class.getSimpleName(),
+        final WebArchive warFileWithClasses = DeploymentUtils.createWarFileWithClasses(
+                AllCustomFailedTest.class.getSimpleName(),
                 FailedCustom.class, SuccessfulCustom.class, TCKBase.class);
+        final File file = new File(warFileWithClasses.getName());
+        warFileWithClasses.as(ZipExporter.class).exportTo(file, true);
+        System.out.println(file.getAbsolutePath());
+        return warFileWithClasses;
     }
 
     /**

@@ -22,9 +22,6 @@
 
 package io.smallrye.health.test;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.shrinkwrap.api.Archive;
@@ -33,6 +30,8 @@ import org.testng.annotations.Test;
 
 import io.smallrye.health.deployment.SuccessfulWellness;
 import io.smallrye.health.deployment.SuccessfulWellnessAsync;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 
 /**
  * @author Antoine Sabot-Durand

@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.smallrye</groupId>
     <artifactId>smallrye-health-testsuite-parent</artifactId>
-    <version>3.2.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -11,6 +11,13 @@
 
   <name>SmallRye Health: Experimental Test Suite</name>
   <description>The test module for features to be included in the specification.</description>
+
+  <properties>
+    <version.wildfly>24.0.0.Final</version.wildfly>
+    <version.weld.core>4.0.2.Final</version.weld.core>
+    <version.org.jboss.arquillian.wildfly>5.0.0.Alpha1</version.org.jboss.arquillian.wildfly>
+  </properties>
+
 
   <dependencies>
     <dependency>
@@ -53,7 +60,7 @@
                 <jboss.options>${jboss.extra.opts}</jboss.options>
               </systemProperties>
               <environmentVariables>
-                <JBOSS_HOME>${project.build.directory}/wildfly-servlet-${version.wildfly}</JBOSS_HOME>
+                <JBOSS_HOME>${project.build.directory}/wildfly-preview-${version.wildfly}</JBOSS_HOME>
               </environmentVariables>
             </configuration>
           </plugin>
@@ -71,7 +78,7 @@
                   <artifactItems>
                     <artifactItem>
                       <groupId>org.wildfly</groupId>
-                      <artifactId>wildfly-servlet-dist</artifactId>
+                      <artifactId>wildfly-preview-dist</artifactId>
                       <version>${version.wildfly}</version>
                       <type>zip</type>
                       <overWrite>false</overWrite>

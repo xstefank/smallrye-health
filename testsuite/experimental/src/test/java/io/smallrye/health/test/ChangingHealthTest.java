@@ -24,9 +24,6 @@ package io.smallrye.health.test;
 
 import java.util.function.Supplier;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.shrinkwrap.api.Archive;
@@ -35,6 +32,8 @@ import org.testng.annotations.Test;
 
 import io.smallrye.health.deployment.ChangingLivenessHealthCheck;
 import io.smallrye.health.deployment.ChangingReadinessHealthCheckAsync;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 
 public class ChangingHealthTest extends TCKBase {
 

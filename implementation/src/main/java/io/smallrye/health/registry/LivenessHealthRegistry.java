@@ -1,10 +1,9 @@
 package io.smallrye.health.registry;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.health.Liveness;
 
 import io.smallrye.health.api.HealthRegistry;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @Liveness
 @ApplicationScoped

@@ -6,9 +6,6 @@ import static org.junit.Assert.assertThrows;
 
 import java.util.Arrays;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.junit.Assert;
@@ -21,6 +18,8 @@ import io.smallrye.health.registry.ReadinessHealthRegistry;
 import io.smallrye.health.registry.StartupHealthRegistry;
 import io.smallrye.health.registry.WellnessHealthRegistry;
 import io.smallrye.mutiny.Uni;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 
 public class HealthRegistryTest {
 

@@ -1,9 +1,8 @@
 package io.smallrye.health.registry;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import io.smallrye.health.api.HealthRegistry;
 import io.smallrye.health.api.Wellness;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @Wellness
 @ApplicationScoped

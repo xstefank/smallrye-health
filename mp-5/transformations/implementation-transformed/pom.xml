@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>implmentation-transformed</artifactId>
+  <artifactId>smallrye-health-transformed</artifactId>
   <name>SmallRye Health: Implementation - Transformed</name>
 
   <properties>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>mp-5</artifactId>
+    <groupId>io.smallrye</groupId>
+    <version>3.2.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>transformations</artifactId>
+  <name>SmallRye Health: MP 5 transformations</name>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>api-transformed</module>
+    <module>implementation-transformed</module>
+  </modules>
+
+  <properties>
+    <transformer-input-dir>${project.basedir}</transformer-input-dir>
+    <version.org.wildfly.extras.batavia>1.0.10.Final</version.org.wildfly.extras.batavia>
+
+    <version.eclipse.microprofile.health>4.0-RC2</version.eclipse.microprofile.health>
+
+    <!-- override properties in smallrye-parent with versions from smallrye-jakarta-parent manually -->
+    <version.jakarta.enterprise.cdi.api>3.0.0</version.jakarta.enterprise.cdi.api>
+
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.wildfly.extras.batavia</groupId>
+        <artifactId>transformer-tools-mvn</artifactId>
+        <version>${version.org.wildfly.extras.batavia}</version>
+        <executions>
+          <execution>
+            <id>transform-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>transform-sources</goal>
+            </goals>
+            <configuration>
+              <source-project>${transformer-input-dir}</source-project>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.wildfly.extras.batavia</groupId>
+            <artifactId>transformer-impl-eclipse</artifactId>
+            <version>${version.org.wildfly.extras.batavia}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+</project>

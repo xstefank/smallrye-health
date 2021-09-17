@@ -77,6 +77,7 @@
     <module>testsuite</module>
     <module>ui</module>
     <module>provided-checks</module>
+    <module>mp-5</module>
   </modules>
 
   <dependencyManagement>

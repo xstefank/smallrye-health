@@ -54,7 +54,7 @@ import io.smallrye.common.annotation.Experimental;
 public @interface HealthGroup {
 
     /**
-     * @return name of the custom group
+     * @return name of the custom groupasdf
      */
     String value();
 

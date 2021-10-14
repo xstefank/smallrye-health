@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>smallrye-health-parent</artifactId>
+    <groupId>io.smallrye</groupId>
+    <version>3.2.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>smallrye-health-parent-jakarta</artifactId>
+  <packaging>pom</packaging>
+
+  <name>SmallRye Health: Parent (Jakarta)</name>
+
+  <modules>
+    <module>api-jakarta</module>
+    <module>implementation-jakarta</module>
+    <module>provided-checks-jakarta</module>
+    <module>testsuite-jakarta</module>
+  </modules>
+
+  <properties>
+    <!-- Copied from https://github.com/smallrye/smallrye-parent/blob/31/full-parent-jakarta/pom.xml to override
+    version in smallrye-parent with versions from smallrye-jakarta-parent to which we will switch once we move the
+    whole project to jakarta dependencies. This is a workaround to get the whole project compile with one command. -->
+    <!-- Dependency versions -->
+    <version.jakarta.api>9.1.0</version.jakarta.api>
+    <version.jakarta.annotation.api>2.0.0</version.jakarta.annotation.api>
+    <version.jakarta.enterprise.cdi.api>3.0.0</version.jakarta.enterprise.cdi.api>
+    <version.jakarta.json-p.api>2.0.1</version.jakarta.json-p.api>
+    <version.jakarta.json-b.api>2.0.0</version.jakarta.json-b.api>
+    <version.jakarta.ws.rs.api>3.0.0</version.jakarta.ws.rs.api>
+    <version.jakarta.jms.api>3.0.0</version.jakarta.jms.api>
+
+    <version.org.jboss.logging>3.4.2.Final</version.org.jboss.logging>
+    <version.org.jboss.logging-processor>2.2.1.Final</version.org.jboss.logging-processor>
+    <version.weld.api>4.0.Final</version.weld.api>
+    <version.weld.core>4.0.1.SP1</version.weld.core>
+    <version.org.jboss.jandex>2.4.0.Final</version.org.jboss.jandex>
+    <version.glassfish.json>2.0.1</version.glassfish.json>
+
+    <!-- Testing versions -->
+    <version.assertj>3.19.0</version.assertj>
+    <version.awaitility>4.1.0</version.awaitility>
+    <version.org.jboss.arquillian>1.7.0.Alpha10</version.org.jboss.arquillian>
+    <version.org.jboss.arquillian.container.weld-embedded>3.0.0.Final
+    </version.org.jboss.arquillian.container.weld-embedded>
+    <version.org.jboss.arquillian.wildfly>4.0.0.Alpha1</version.org.jboss.arquillian.wildfly>
+    <version.junit>4.13.2</version.junit>
+    <version.junit5>5.7.2</version.junit5>
+    <version.weld.junit>3.0.0.Final</version.weld.junit>
+    <version.rest-assured>4.4.0</version.rest-assured>
+    <version.testng>7.4.0</version.testng>
+    <version.testcontainers>1.15.3</version.testcontainers>
+
+    <!-- MP 5 version of MP Health -->
+    <version.eclipse.microprofile.health>4.0-RC3</version.eclipse.microprofile.health>
+
+    <!-- other overrides from smallrye-health-parent -->
+    <version.jakarta.servlet>5.0.0</version.jakarta.servlet>
+    <version.wildfly>25.0.0.Final</version.wildfly>
+
+    <!-- transformer properties -->
+    <transformer-input-dir>${project.basedir}</transformer-input-dir>
+    <version.org.wildfly.extras.batavia>1.0.11.Final</version.org.wildfly.extras.batavia>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.eclipse.microprofile.health</groupId>
+        <artifactId>microprofile-health-api</artifactId>
+        <version>${version.eclipse.microprofile.health}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.annotation.versioning</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.health</groupId>
+        <artifactId>microprofile-health-tck</artifactId>
+        <version>${version.eclipse.microprofile.health}</version>
+        <exclusions>
+          <exclusion>
+            <groupId> javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.json</groupId>
+            <artifactId>javax.json-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.mail</groupId>
+            <artifactId>mailapi</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.microprofile.config</groupId>
+        <artifactId>microprofile-config-api</artifactId>
+        <version>${version.eclipse.microprofile.config}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${version.jakarta.servlet}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.weld.servlet</groupId>
+        <artifactId>weld-servlet-core</artifactId>
+        <version>${version.weld.core}</version>
+        <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>io.smallrye.config</groupId>
+        <artifactId>smallrye-config</artifactId>
+        <version>${version.smallrye-config}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye.common</groupId>
+        <artifactId>smallrye-common-annotation</artifactId>
+        <version>${version.smallrye-common}</version>
+      </dependency>
+
+      <!-- Dependencies provided by the project -->
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-health-api-jakarta</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-health-jakarta</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-health-tck-jakarta</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+<!--      <dependency>-->
+<!--        <groupId>io.smallrye</groupId>-->
+<!--        <artifactId>smallrye-health-ui</artifactId>-->
+<!--        <version>${project.version}</version>-->
+<!--      </dependency>-->
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.wildfly.extras.batavia</groupId>
+        <artifactId>transformer-tools-mvn</artifactId>
+        <version>${version.org.wildfly.extras.batavia}</version>
+        <executions>
+          <execution>
+            <id>transform-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>transform-sources</goal>
+            </goals>
+            <configuration>
+              <source-project>${transformer-input-dir}</source-project>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.wildfly.extras.batavia</groupId>
+            <artifactId>transformer-impl-eclipse</artifactId>
+            <version>${version.org.wildfly.extras.batavia}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

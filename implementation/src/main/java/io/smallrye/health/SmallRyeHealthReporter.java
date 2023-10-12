@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,7 +25,6 @@ import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
@@ -52,6 +52,7 @@ import io.smallrye.health.api.Wellness;
 import io.smallrye.health.registry.HealthRegistries;
 import io.smallrye.health.registry.HealthRegistryImpl;
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.Context;
 
 @ApplicationScoped
 public class SmallRyeHealthReporter {
@@ -223,67 +224,67 @@ public class SmallRyeHealthReporter {
         writer.close();
     }
 
-    public SmallRyeHealth getHealth() {
-        return getHealthAsync().await().atMost(Duration.ofSeconds(timeoutSeconds));
+    public SmallRyeHealth getHealth(Context context) {
+        return getHealthAsync(context).await().atMost(Duration.ofSeconds(timeoutSeconds));
     }
 
-    public SmallRyeHealth getLiveness() {
-        return getLivenessAsync().await().atMost(Duration.ofSeconds(timeoutSeconds));
+    public SmallRyeHealth getLiveness(Context context) {
+        return getLivenessAsync(context).await().atMost(Duration.ofSeconds(timeoutSeconds));
     }
 
-    public SmallRyeHealth getReadiness() {
-        return getReadinessAsync().await().atMost(Duration.ofSeconds(timeoutSeconds));
+    public SmallRyeHealth getReadiness(Context context) {
+        return getReadinessAsync(context).await().atMost(Duration.ofSeconds(timeoutSeconds));
     }
 
-    public SmallRyeHealth getStartup() {
-        return getStartupAsync().await().atMost(Duration.ofSeconds(timeoutSeconds));
+    public SmallRyeHealth getStartup(Context context) {
+        return getStartupAsync(context).await().atMost(Duration.ofSeconds(timeoutSeconds));
     }
 
     @Experimental("Wellness experimental checks")
-    public SmallRyeHealth getWellness() {
-        return getWellnessAsync().await().atMost(Duration.ofSeconds(timeoutSeconds));
+    public SmallRyeHealth getWellness(Context context) {
+        return getWellnessAsync(context).await().atMost(Duration.ofSeconds(timeoutSeconds));
     }
 
-    public SmallRyeHealth getHealthGroup(String groupName) {
-        return getHealthGroupAsync(groupName).await().atMost(Duration.ofSeconds(timeoutSeconds));
+    public SmallRyeHealth getHealthGroup(String groupName, Context context) {
+        return getHealthGroupAsync(groupName, context).await().atMost(Duration.ofSeconds(timeoutSeconds));
     }
 
-    public SmallRyeHealth getHealthGroups() {
-        return getHealthGroupsAsync().await().atMost(Duration.ofSeconds(timeoutSeconds));
+    public SmallRyeHealth getHealthGroups(Context context) {
+        return getHealthGroupsAsync(context).await().atMost(Duration.ofSeconds(timeoutSeconds));
     }
 
     @Experimental("Asynchronous Health Check procedures")
-    public Uni<SmallRyeHealth> getHealthAsync() {
-        smallRyeHealthUni = getHealthAsync(smallRyeHealthUni, LIVENESS, READINESS, WELLNESS, STARTUP);
+    public Uni<SmallRyeHealth> getHealthAsync(Context context) {
+        smallRyeHealthUni = getHealthAsync(smallRyeHealthUni, context, LIVENESS, READINESS, WELLNESS, STARTUP);
         return smallRyeHealthUni;
     }
 
     @Experimental("Asynchronous Health Check procedures")
-    public Uni<SmallRyeHealth> getLivenessAsync() {
-        smallRyeLivenessUni = getHealthAsync(smallRyeLivenessUni, LIVENESS);
+    public Uni<SmallRyeHealth> getLivenessAsync(Context context) {
+        smallRyeLivenessUni = getHealthAsync(smallRyeLivenessUni, context, LIVENESS);
         return smallRyeLivenessUni;
     }
 
     @Experimental("Asynchronous Health Check procedures")
-    public Uni<SmallRyeHealth> getReadinessAsync() {
-        smallRyeReadinessUni = getHealthAsync(smallRyeReadinessUni, READINESS);
+    public Uni<SmallRyeHealth> getReadinessAsync(Context context) {
+        smallRyeReadinessUni = getHealthAsync(smallRyeReadinessUni, context, READINESS);
         return smallRyeReadinessUni;
     }
 
     @Experimental("Asynchronous Health Check procedures")
-    public Uni<SmallRyeHealth> getStartupAsync() {
-        smallryeStartupUni = getHealthAsync(smallryeStartupUni, STARTUP);
+    public Uni<SmallRyeHealth> getStartupAsync(Context context) {
+        smallryeStartupUni = getHealthAsync(smallryeStartupUni, context, STARTUP);
         return smallryeStartupUni;
     }
 
     @Experimental("Asynchronous Health Check procedures & wellness experimental checks")
-    public Uni<SmallRyeHealth> getWellnessAsync() {
-        smallryeWellnessUni = getHealthAsync(smallryeWellnessUni, WELLNESS);
+    public Uni<SmallRyeHealth> getWellnessAsync(Context context) {
+        smallryeWellnessUni = getHealthAsync(smallryeWellnessUni, context, WELLNESS);
         return smallryeWellnessUni;
     }
 
     @Experimental("Asynchronous Health Check procedures and Health Groups")
-    public Uni<SmallRyeHealth> getHealthGroupAsync(String groupName) {
+    public Uni<SmallRyeHealth> getHealthGroupAsync(String groupName, Context context) {
         List<Uni<HealthCheckResponse>> checks = new ArrayList<>();
         if (allHealthChecks != null && allAsyncHealthChecks != null) {
             if (groupName.equals(defaultHealthGroup)) {
@@ -297,11 +298,11 @@ public class SmallRyeHealthReporter {
 
         checks.addAll(((HealthRegistryImpl) HealthRegistries.getHealthGroupRegistry(groupName)).getChecks(healthChecksConfigs));
 
-        return getHealthAsync(checks);
+        return getHealthAsync(checks, context);
     }
 
     @Experimental("Asynchronous Health Check procedures and Health Groups")
-    public Uni<SmallRyeHealth> getHealthGroupsAsync() {
+    public Uni<SmallRyeHealth> getHealthGroupsAsync(Context context) {
         List<Uni<HealthCheckResponse>> checks = new ArrayList<>();
 
         if (defaultHealthGroup != null) {
@@ -318,7 +319,7 @@ public class SmallRyeHealthReporter {
                             .addAll(((HealthRegistryImpl) healthRegistry).getChecks(healthChecksConfigs)));
         }
 
-        return getHealthAsync(checks);
+        return getHealthAsync(checks, context);
     }
 
     public void addHealthCheck(HealthCheck check) {
@@ -408,21 +409,21 @@ public class SmallRyeHealthReporter {
         return healthChecks;
     }
 
-    private Uni<SmallRyeHealth> getHealthAsync(Uni<SmallRyeHealth> cachedHealth, HealthType... types) {
+    private Uni<SmallRyeHealth> getHealthAsync(Uni<SmallRyeHealth> cachedHealth, Context context, HealthType... types) {
         if (!checksInitialized) {
             initChecks();
         }
 
         if (contextPropagated) {
             recreateCheckUnis();
-            return computeHealth(types);
+            return computeHealth(types, context);
         } else {
             if (additionalListsChanged(types) || additionalListsChanged || cachedHealth == null) {
                 additionalListsChanged = false;
-                cachedHealth = computeHealth(types);
+                cachedHealth = computeHealth(types, context);
             }
 
-            return cachedHealth;
+            return cachedHealth.emitOn(command -> context.runOnContext(x -> command.run()));
         }
     }
 
@@ -465,7 +466,7 @@ public class SmallRyeHealthReporter {
         return needRecompute;
     }
 
-    private Uni<SmallRyeHealth> computeHealth(HealthType[] types) {
+    private Uni<SmallRyeHealth> computeHealth(HealthType[] types, Context context) {
         List<Uni<HealthCheckResponse>> checks = new ArrayList<>();
 
         for (HealthType type : types) {
@@ -489,10 +490,10 @@ public class SmallRyeHealthReporter {
             }
         }
 
-        return getHealthAsync(checks);
+        return getHealthAsync(checks, context);
     }
 
-    private Uni<SmallRyeHealth> getHealthAsync(Collection<Uni<HealthCheckResponse>> checks) {
+    private Uni<SmallRyeHealth> getHealthAsync(Collection<Uni<HealthCheckResponse>> checks, Context context) {
         List<Uni<HealthCheckResponse>> healthCheckUnis = new ArrayList<>();
 
         if (checks != null) {
@@ -507,8 +508,13 @@ public class SmallRyeHealthReporter {
             return Uni.createFrom().item(createEmptySmallRyeHealth(emptyChecksOutcome));
         }
 
+        System.out.println("SR-Health before Uni.combine() context = " + context);
+
         return Uni.combine().all().unis(healthCheckUnis)
-                .combinedWith(responses -> {
+                .with(Function.identity())
+                .emitOn(command -> context.runOnContext(x -> command.run()))
+                .map(responses -> {
+                    System.out.println("SR-Health Uni.combine() Thread.currentThread() = " + Thread.currentThread());
                     JsonArrayBuilder results = jsonProvider.createArrayBuilder();
                     HealthCheckResponse.Status status = HealthCheckResponse.Status.UP;
 

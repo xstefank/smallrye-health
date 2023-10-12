@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import io.vertx.core.Vertx;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "SmallRyeLivenessServlet", urlPatterns = "/health/live")
 public class SmallRyeLivenessServlet extends HttpServlet {
@@ -15,7 +17,7 @@ public class SmallRyeLivenessServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 
-        SmallRyeHealth health = reporter.getLiveness();
+        SmallRyeHealth health = reporter.getLiveness(Vertx.currentContext());
         if (health.isDown()) {
             resp.setStatus(503);
         }

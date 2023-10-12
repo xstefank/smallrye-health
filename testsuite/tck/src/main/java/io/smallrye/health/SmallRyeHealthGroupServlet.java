@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import io.vertx.core.Context;
+import io.vertx.core.Vertx;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "SmallRyeHealthGroupServlet", urlPatterns = "/health/group/*")
 public class SmallRyeHealthGroupServlet extends HttpServlet {
@@ -16,7 +19,9 @@ public class SmallRyeHealthGroupServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 
         String pathInfo = req.getPathInfo();
-        SmallRyeHealth health = pathInfo != null ? reporter.getHealthGroup(pathInfo.substring(1)) : reporter.getHealthGroups();
+        Context context = Vertx.currentContext();
+        SmallRyeHealth health = pathInfo != null ? reporter.getHealthGroup(pathInfo.substring(1), context)
+                : reporter.getHealthGroups(context);
         if (health.isDown()) {
             resp.setStatus(503);
         }
